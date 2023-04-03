@@ -1,0 +1,1 @@
+LOADER_BIN_SRC= $(SRC)/boot/loader.asm
