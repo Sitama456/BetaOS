@@ -10,6 +10,7 @@
         "elf.h": "c",
         "memlayout.h": "c",
         "stdarg.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "kdebug.h": "c"
     }
 }

@@ -61,6 +61,8 @@ __boot_pgdir:
 
 .set i, 0
 __boot_pt1:
+
+
 .rept 1024
     .long i * PGSIZE + (PTE_P | PTE_W)
     .set i, i + 1

@@ -8,4 +8,6 @@ KERNEL_BIN_SRC += $(KERNEL_PATH)/init/entry.o	\
 				  $(LIBS_PATH)/string.o			\
 				  $(LIBS_PATH)/assert.o			\
 				  $(LIBS_PATH)/printf.o			\
-				  $(LIBS_PATH)/vsprintf.o
+				  $(LIBS_PATH)/vsprintf.o		\
+				  $(KERNEL_PATH)/debug/kdebug.o
+

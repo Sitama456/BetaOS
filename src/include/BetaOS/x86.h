@@ -105,12 +105,11 @@ static inline char* __strcpy(char *dst, const char * src) {
 #define __HAVE_ARCH_MEMSET
 static inline void *__memset(void *s, char c, size_t n) {
     int d0, d1;
-    asm volatile(
-        "rep stosb;"
-        : "=&c"(d0), "=&D"(d1)
-        : "0"(n), "a"(c), "1"(s)
-        : "memory"
-    );    
+    asm volatile (
+        "rep; stosb;"
+        : "=&c" (d0), "=&D" (d1)
+        : "0" (n), "a" (c), "1" (s)
+        : "memory");
     return s;
 }
 #endif //__HAVE_ARCH_MEMSET
@@ -120,7 +119,7 @@ static inline void *__memset(void *s, char c, size_t n) {
 static inline void *__memcpy(void *dst, const void *src, size_t n) {
     int d0, d1, d2;
     asm volatile(
-        "rep movsl;"
+        "rep; movsl;"
         "movl %4, %%ecx;"
         "andl $3, %%ecx;"
         "jz 1f;"
@@ -153,5 +152,9 @@ static inline void *__memmove(void *dst, const void *src, size_t n) {
 } 
 
 #endif //__HAVE_ARCH_MEMMOVE
+
+static inline void boch_break_point() {
+    asm volatile("xchg %bx, %bx");
+}
 
 #endif
