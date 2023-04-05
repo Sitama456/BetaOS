@@ -61,11 +61,11 @@ protcseg:
     movw %ax, %gs                                   # -> GS
     movw %ax, %ss 
     # 读入Loader
-    movl $0x1000, %edi
-    movl $0x2, %ecx
-    movl $0x4, %ebx
+    movl $0x1000, %edi                              # 起始地址
+    movl $0x2, %ecx                                 # 起始扇区
+    movl $0x4, %ebx                                 # 扇区个数
     call read_sections
-    xchg %bx, %bx
+    # xchg %bx, %bx
     # 将控制权交给Loader
     movl $0x1000, %esp
     jmp $PROT_MODE_CSEG, $0x1000

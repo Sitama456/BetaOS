@@ -8,6 +8,8 @@
         "string.h": "c",
         "x86.h": "c",
         "elf.h": "c",
-        "memlayout.h": "c"
+        "memlayout.h": "c",
+        "stdarg.h": "c",
+        "stdio.h": "c"
     }
 }
