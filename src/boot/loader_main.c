@@ -1,11 +1,39 @@
-#include <TinyOS/type.h>
-#include <TinyOS/x86.h>
-#include <TinyOS/elf.h>
+#include <BetaOS/type.h>
+#include <BetaOS/x86.h>
+#include <BetaOS/elf.h>
 #define SECTSIZE 512
 #define SECTOFFSET 10       // 内核起始的扇区数
 
 #define ELFHDR          ((struct elfhdr *)0x10000)      // scratch space
 
+
+static void readseg(uintptr_t va, uint32_t count, uint32_t offset);
+void load_kernel(void) {
+    // 读取 4KB 大小的 ELF 文件头
+    readseg(ELFHDR, SECTSIZE * 8, 0);
+    if (ELFHDR->e_magic != ELF_MAGIC) {
+        goto bad;
+    }
+
+    struct proghdr *ph, *eph;
+    // 程序段头起始和结束渎职
+    ph = (struct proghdr*)((uintptr_t)ELFHDR + ELFHDR->e_phoff);
+    eph = ph + ELFHDR->e_phnum;
+    // ph->p_va & 0xFFFFFF 表示从1M内存地址处开始
+    // 因为在链接时把内核的虚拟地址设置为0xC0100000处开始，而没有那么多物理内存
+    for (; ph < eph; ph++) {
+        readseg(ph->p_va & 0xFFFFFF, ph->p_memsz, ph->p_offset);
+    }
+
+    // 调用入口地址
+    ((void (*)(void))(ELFHDR->e_entry & 0xFFFFFF))();
+
+bad:
+    outw(0x8A00, 0x8A00);
+    outw(0x8A00, 0x8E00);
+
+    // 不应该到这
+}
 
 /// @brief 等待磁盘准备数据
 /// @param  
@@ -48,29 +76,3 @@ static void readseg(uintptr_t va, uint32_t count, uint32_t offset) {
     }
 }
 
-void kern_load(void) {
-    // 读取 4KB 大小的 ELF 文件头
-    readseg(ELFHDR, SECTSIZE * 8, 0);
-    if (ELFHDR->e_magic != ELF_MAGIC) {
-        goto bad;
-    }
-
-    struct proghdr *ph, *eph;
-    // 程序段头起始和结束渎职
-    ph = (struct proghdr*)((uintptr_t)ELFHDR + ELFHDR->e_phoff);
-    eph = ph + ELFHDR->e_phnum;
-    // ph->p_va & 0xFFFFFF 表示从1M内存地址处开始
-    // 因为在链接时把内核的虚拟地址设置为0xC0100000处开始，而没有那么多物理内存
-    for (; ph < eph; ph++) {
-        readseg(ph->p_va & 0xFFFFFF, ph->p_memsz, ph->p_offset);
-    }
-
-    // 调用入口地址
-    ((void (*)(void))(ELFHDR->e_entry & 0xFFFFFF))();
-
-bad:
-    outw(0x8A00, 0x8A00);
-    outw(0x8A00, 0x8E00);
-
-    // 不应该到这
-}

@@ -1,1 +1,1 @@
-LOADER_BIN_SRC= $(SRC)/boot/loader.asm
+LOADER_BIN_SRC= $(BUILD)/boot/loader_main.o

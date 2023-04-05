@@ -97,9 +97,8 @@
 
 #ifndef __ASSEMBLER__
 
-#include <defs.h>
-#include <atomic.h>
-#include <list.h>
+#include <BetaOS/type.h>
+
 
 typedef uintptr_t pte_t;
 typedef uintptr_t pde_t;
@@ -129,8 +128,8 @@ struct Page {
     uint32_t flags;                 // array of flags that describe the status of the page frame
     unsigned int property;          // used in buddy system, stores the order (the X in 2^X) of the continuous memory block
     int zone_num;                   // used in buddy system, the No. of zone which the page belongs to
-    list_entry_t page_link;         // free list link
-    list_entry_t pra_page_link;     // used for pra (page replace algorithm)
+    //list_entry_t page_link;         // free list link
+    //list_entry_t pra_page_link;     // used for pra (page replace algorithm)
     uintptr_t pra_vaddr;            // used for pra (page replace algorithm)
 };
 
@@ -151,7 +150,7 @@ struct Page {
 
 /* free_area_t - maintains a doubly linked list to record free (unused) pages */
 typedef struct {
-    list_entry_t free_list;         // the list header
+    //list_entry_t free_list;         // the list header
     unsigned int nr_free;           // # of free pages in this free list
 } free_area_t;
 

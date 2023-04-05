@@ -12,7 +12,7 @@ CFLAGS+= -fno-pic				# 不需要位置无关的代码  position independent code
 CFLAGS+= -fno-pie				# 不需要位置无关的可执行程序 position independent executable
 CFLAGS+= -nostdlib				# 不需要标准库
 CFLAGS+= -fno-stack-protector	# 不需要栈保护
-CFLAGS+= -DONIX					# 定义 ONIX
+CFLAGS+= -DBETAOS				# 定义 BETAOS
 CFLAGS:=$(strip ${CFLAGS})
 
 DEBUG:= -g
@@ -34,23 +34,32 @@ include $(TOOLS)/KERNEL.mk
 
 
 #############  boot.bin ############
-$(BUILD)/boot.bin: $(BOOT_BIN_SRC)
+$(BUILD)/boot.elf: $(BOOT_BIN_SRC)
 	$(shell mkdir -p $(dir $@))
-	$(ASM) -f bin $< -o $@
+	ld -T $(TOOLS)/boot.ld ${LDFLAGS} $^ -o $@
+
+$(BUILD)/boot.binary: $(BUILD)/boot.elf
+	objcopy -S -O binary $< $@
+
+
+$(BUILD)/boot.bin: $(BUILD)/boot.binary $(TOOLS)/sign
+	$(TOOLS)/sign $(BUILD)/boot.binary $@
+
+$(TOOLS)/sign: $(TOOLS)/sign.c
+	$(CC) $< -o $@
 
 #############  loader.bin  ##########
-$(BUILD)/loader.bin: $(LOADER_BIN_SRC)
+$(BUILD)/loader.elf: $(LOADER_BIN_SRC)
 	$(shell mkdir -p $(dir $@))
-	$(ASM) -f bin $< -o $@
+	ld -T $(TOOLS)/loader.ld ${LDFLAGS}  $^ -o $@
 
+$(BUILD)/loader.bin: $(BUILD)/loader.elf
+	objcopy -S -O binary $< $@
 
 ############  kernel.bin  #################
-$(BUILD)/kernel.o: $(KERNEL_BIN_SRC)
+$(BUILD)/kernel.bin: $(KERNEL_BIN_SRC)
 	$(shell mkdir -p $(dir $@))
-	ld -T $(TOOLS)/kernel.ld ${LDFLAGS} $^ -o $@
-
-$(BUILD)/kernel.bin: $(BUILD)/kernel.o
-	objcopy -O binary $< $@
+	$(LD) -T $(TOOLS)/kernel.ld ${LDFLAGS} $^ -o $@
 
 ########### 中间文件 #############
 

@@ -44,7 +44,6 @@
 #define STS_TG32        0xF         // 32-bit Trap Gate
 
 #ifdef __ASSEMBLER__
-
 #define SEG_NULL                                                \
     .word 0, 0;                                                 \
     .byte 0, 0, 0, 0

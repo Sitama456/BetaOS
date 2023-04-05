@@ -1,6 +1,6 @@
 #ifndef ELF_H_
 #define ELF_H_
-#include <TinyOS/type.h>
+#include <BetaOS/type.h>
 
 #define ELF_MAGIC   0x464C457FU         // "\x7FELF" in little endian
 
