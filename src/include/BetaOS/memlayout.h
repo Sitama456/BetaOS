@@ -109,21 +109,21 @@ typedef pte_t swap_entry_t; //the pte can also be a swap entry
 #define E820_ARM            1       // address range memory
 #define E820_ARR            2       // address range reserved
 
-struct e820map {
+typedef struct e820map {
     int nr_map;
     struct {
         uint64_t addr;
         uint64_t size;
         uint32_t type;
     } __attribute__((packed)) map[E820MAX];
-};
+} e820map_t;
 
 /* *
  * struct Page - Page descriptor structures. Each Page describes one
  * physical page. In kern/mm/pmm.h, you can find lots of useful functions
  * that convert Page to other data types, such as phyical address.
  * */
-struct Page {
+typedef struct Page {
     int ref;                        // page frame's reference counter
     uint32_t flags;                 // array of flags that describe the status of the page frame
     unsigned int property;          // used in buddy system, stores the order (the X in 2^X) of the continuous memory block
@@ -131,7 +131,7 @@ struct Page {
     //list_entry_t page_link;         // free list link
     //list_entry_t pra_page_link;     // used for pra (page replace algorithm)
     uintptr_t pra_vaddr;            // used for pra (page replace algorithm)
-};
+} Page_t;
 
 /* Flags describing the status of a page frame */
 #define PG_reserved                 0       // the page descriptor is reserved for kernel or unusable

@@ -11,6 +11,8 @@
         "memlayout.h": "c",
         "stdarg.h": "c",
         "stdio.h": "c",
-        "kdebug.h": "c"
+        "kdebug.h": "c",
+        "pmm.h": "c",
+        "assert.h": "c"
     }
 }

@@ -153,8 +153,26 @@ static inline void *__memmove(void *dst, const void *src, size_t n) {
 
 #endif //__HAVE_ARCH_MEMMOVE
 
-static inline void boch_break_point() {
-    asm volatile("xchg %bx, %bx");
+/* Pseudo-descriptors used for LGDT, LLDT(not used) and LIDT instructions. */
+typedef struct pseudodesc {
+    uint16_t pd_lim;        // Limit
+    uintptr_t pd_base;      // Base address
+} pseudodesc_t __attribute__ ((packed));
+
+// 读cr3寄存器的值
+static inline uintptr_t read_cr3() {
+    uintptr_t cr3;
+    asm volatile("mov %%cr3, %0" : "=r" (cr3)::"memory");
+    return cr3;
+}
+
+// 使页表失效
+static inline void invlpg(void *addr) {
+    asm volatile("invlpg (%0)" ::"r"(addr):"memory");
+}
+
+static inline void ltr(uint16_t sel) {
+    asm volatile("ltr %0"::"r"(sel):"memory");
 }
 
 #endif

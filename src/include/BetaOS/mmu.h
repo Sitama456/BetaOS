@@ -141,7 +141,7 @@ struct segdesc {
     }
 
 /* task state segment format (as described by the Pentium architecture book) */
-struct taskstate {
+typedef struct taskstate {
     uint32_t ts_link;       // old ts selector
     uintptr_t ts_esp0;      // stack pointers and segment selectors
     uint16_t ts_ss0;        // after an increase in privilege level
@@ -179,7 +179,7 @@ struct taskstate {
     uint16_t ts_padding10;
     uint16_t ts_t;          // trap on task switch
     uint16_t ts_iomb;       // i/o map base address
-} __attribute__((packed));
+} taskstate_t __attribute__((packed));
 
 #endif /* !__ASSEMBLER__ */
 
@@ -196,23 +196,24 @@ struct taskstate {
 // To construct a linear address la from PDX(la), PTX(la), and PGOFF(la),
 // use PGADDR(PDX(la), PTX(la), PGOFF(la)).
 
-// page directory index
+// 从虚拟地址中获取页目录项
 #define PDX(la) ((((uintptr_t)(la)) >> PDXSHIFT) & 0x3FF)
 
-// page table index
+// 从虚拟地址中获取页表项
 #define PTX(la) ((((uintptr_t)(la)) >> PTXSHIFT) & 0x3FF)
 
-// page number field of address
+// 从虚拟地址中获取页表下标
 #define PPN(la) (((uintptr_t)(la)) >> PTXSHIFT)
 
-// offset in page
+// 从虚拟地址中获取页内偏移
 #define PGOFF(la) (((uintptr_t)(la)) & 0xFFF)
 
-// construct linear address from indexes and offset
+// 将页表三元组转成虚拟地址
 #define PGADDR(d, t, o) ((uintptr_t)((d) << PDXSHIFT | (t) << PTXSHIFT | (o)))
 
-// address in page table or page directory entry
+// 获取页表项的起始地址
 #define PTE_ADDR(pte)   ((uintptr_t)(pte) & ~0xFFF)
+// 获取页目录项的起始地址
 #define PDE_ADDR(pde)   PTE_ADDR(pde)
 
 /* page directory and page table constants */
